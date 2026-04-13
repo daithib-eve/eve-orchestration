@@ -1,0 +1,9 @@
+# Module repos — independent git repositories, not submodules
+platform/
+trader/
+ledger/
+industry/
+
+# Environment files should never live here, but belt-and-braces
+.env
+*.env
