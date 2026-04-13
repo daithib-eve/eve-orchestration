@@ -6,6 +6,11 @@ TRADER_DIR   := $(HOME)/projects/eve/trader
 dev-up:
 	@echo "Creating dev postgres volume if not present..."
 	docker volume create eve-platform-dev-postgres-data || true
+	@echo "Building eve-platform app image..."
+	docker compose -f $(PLATFORM_DIR)/docker-compose.yml \
+	               -f $(PLATFORM_DIR)/docker-compose.dev.yml \
+	               --env-file $(PLATFORM_DIR)/.env.dev \
+	               -p eve-platform-dev build app
 	@echo "Building eve-trader app image..."
 	docker compose -f $(TRADER_DIR)/docker-compose.yml \
 	               -f $(TRADER_DIR)/docker-compose.dev.yml \
