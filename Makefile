@@ -2,11 +2,6 @@ PLATFORM_DIR      := $(HOME)/projects/eve/platform
 TRADER_DIR        := $(HOME)/projects/eve/trader
 PROD_PLATFORM_DIR := /opt/eve/platform
 PROD_TRADER_DIR   := /opt/eve/trader
-PROD_COMPOSE      := sudo docker compose \
-                         -f $(PROD_PLATFORM_DIR)/docker-compose.yml \
-                         -f $(PROD_PLATFORM_DIR)/docker-compose.prod.yml \
-                         --env-file $(PROD_PLATFORM_DIR)/.env.prod \
-                         -p eve-platform-prod
 
 .PHONY: dev-up dev-down dev-logs dev-ps prod-deploy
 
@@ -61,11 +56,12 @@ prod-deploy:
 	@echo "--- [4/6] Applying eve-trader migrations ---"
 	@bash -c 'for f in $$(ls $(PROD_TRADER_DIR)/eve_trader/db/migrations/*.sql | sort); do echo "  Applying $$f..."; sudo docker exec -i eve-platform-prod-postgres psql -U eve_trader -d eve_trader < "$$f"; done'
 	@echo ""
-	@echo "--- [5/6] Rebuilding app containers ---"
-	$(PROD_COMPOSE) build app eve-trader-app
-	@echo ""
-	@echo "--- [6/6] Restarting stack ---"
-	sudo make -C /opt/eve prod-up
+	@echo "--- [5/6] Restarting prod stack (rebuilds stale images) ---"
+	docker compose \
+	  -f /opt/eve/platform/docker-compose.yml \
+	  -f /opt/eve/platform/docker-compose.prod.yml \
+	  --env-file /opt/eve/platform/.env.prod \
+	  up -d --build
 	@echo ""
 	@echo "Waiting 15 seconds for stack to stabilise..."
 	sleep 15
