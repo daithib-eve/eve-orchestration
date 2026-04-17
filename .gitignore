@@ -7,3 +7,4 @@ industry/
 # Environment files should never live here, but belt-and-braces
 .env
 *.env
+memory/
