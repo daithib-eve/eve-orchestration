@@ -18,7 +18,12 @@ dev-up:
 	               -f $(TRADER_DIR)/docker-compose.dev.yml \
 	               --env-file $(PLATFORM_DIR)/.env.dev \
 	               -p eve-trader-dev build app
-	@echo "Starting eve-platform stack (postgres, nginx, platform app, trader app)..."
+	@echo "Building eve-ledger app image..."
+	docker compose -f $(PLATFORM_DIR)/docker-compose.yml \
+	               -f $(PLATFORM_DIR)/docker-compose.dev.yml \
+	               --env-file $(PLATFORM_DIR)/.env.dev \
+	               -p eve-platform-dev build eve-ledger-app
+	@echo "Starting eve-platform stack (postgres, nginx, platform app, trader app, ledger app)..."
 	docker compose -f $(PLATFORM_DIR)/docker-compose.yml \
 	               -f $(PLATFORM_DIR)/docker-compose.dev.yml \
 	               --env-file $(PLATFORM_DIR)/.env.dev \
